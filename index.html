@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Blue Argentina — Catálogo Mayorista</title>
+  <style>
+    :root {
+      --blue: #003087;
+      --blue-light: #0055b3;
+      --blue-pale: #e8f0fb;
+      --red: #c62828;
+      --green: #2e7d32;
+      --gray-bg: #f0f4f8;
+      --gray: #f5f5f5;
+      --text: #1a1a1a;
+      --muted: #666;
+      --border: #e0e0e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--gray-bg); color: var(--text); }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--blue);
+      color: white;
+      padding: 14px 20px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .brand { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .brand span { color: #90caf9; }
+    .brand small { display: block; font-size: 11px; font-weight: 400; opacity: 0.75; letter-spacing: 0.5px; margin-top: 1px; }
+    .cart-btn {
+      background: white;
+      color: var(--blue);
+      border: none;
+      border-radius: 22px;
+      padding: 8px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+    .cart-btn:active { transform: scale(0.97); }
+    .cart-count {
+      background: var(--red);
+      color: white;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 9px 16px;
+      border-radius: 22px;
+      border: none;
+      font-size: 14px;
+      outline: none;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      transition: background 0.2s;
+    }
+    .search-bar input::placeholder { color: rgba(255,255,255,0.6); }
+    .search-bar input:focus { background: rgba(255,255,255,0.25); }
+
+    /* ── TABS ── */
+    .tabs {
+      background: white;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      border-bottom: 2px solid var(--border);
+      scrollbar-width: none;
+      padding: 0 8px;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 11px 18px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-size: 13px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab:hover { color: var(--blue-light); }
+    .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+    /* ── PRODUCTS ── */
+    .products-section { padding: 16px; max-width: 960px; margin: 0 auto; }
+    .category-title {
+      font-size: 16px; font-weight: 800;
+      color: var(--blue);
+      margin: 24px 0 12px;
+      padding-left: 10px;
+      border-left: 4px solid var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    /* ── PRODUCT CARD ── */
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column;
+      transition: box-shadow 0.15s, transform 0.1s;
+      border: 1.5px solid transparent;
+    }
+    .product-card:hover { box-shadow: 0 4px 14px rgba(0,48,135,0.13); transform: translateY(-1px); }
+    .product-card.agotado { opacity: 0.55; }
+    .product-card.in-cart { border-color: var(--blue); }
+
+    /* ── FOTO ── */
+    .product-img-wrap {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #f8f9fb;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .product-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      padding: 8px;
+      transition: transform 0.2s;
+    }
+    .product-card:hover .product-img-wrap img { transform: scale(1.04); }
+    .product-img-placeholder {
+      font-size: 36px; opacity: 0.18;
+    }
+    .product-card-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+
+    .product-header {
+      display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    }
+    .product-code {
+      font-size: 11px; color: var(--muted);
+      font-family: 'Courier New', monospace;
+      background: var(--gray); padding: 2px 7px;
+      border-radius: 4px; flex-shrink: 0;
+    }
+    .badge-agotado {
+      background: #ffebee; color: var(--red);
+      font-size: 10px; font-weight: 800;
+      padding: 2px 8px; border-radius: 10px;
+      white-space: nowrap; letter-spacing: 0.3px;
+    }
+    .product-name {
+      font-size: 13px; font-weight: 600; line-height: 1.4;
+      flex: 1;
+    }
+    .product-prices {
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .price-mayorista { font-size: 22px; font-weight: 800; color: var(--blue); line-height: 1; }
+    .price-pvp { font-size: 11px; color: var(--muted); text-align: right; }
+    .price-pvp strong { color: var(--text); }
+
+    .product-footer { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+    .qty-control {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--gray); border-radius: 20px;
+      padding: 3px 6px;
+    }
+    .qty-btn {
+      width: 26px; height: 26px;
+      border-radius: 50%; border: none;
+      background: var(--blue); color: white;
+      font-size: 18px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      line-height: 1; transition: background 0.15s;
+    }
+    .qty-btn:hover { background: var(--blue-light); }
+    .qty-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .qty-display {
+      width: 28px; text-align: center;
+      font-size: 16px; font-weight: 700;
+      background: none; border: none; color: var(--text);
+    }
+    .add-btn {
+      flex: 1;
+      background: var(--blue-pale); color: var(--blue);
+      border: 1.5px solid var(--blue-pale);
+      border-radius: 20px; padding: 7px 10px;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .add-btn:hover { background: var(--blue); color: white; border-color: var(--blue); }
+    .add-btn.added { background: var(--green); color: white; border-color: var(--green); }
+    .add-btn:disabled { background: #eee; color: #aaa; border-color: #eee; cursor: not-allowed; }
+
+    /* ── CART PANEL ── */
+    .cart-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 200;
+    }
+    .cart-overlay.open { display: block; }
+    .cart-panel {
+      position: fixed; right: 0; top: 0; bottom: 0;
+      width: min(420px, 100vw);
+      background: white; z-index: 201;
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.18);
+    }
+    .cart-overlay.open .cart-panel { transform: translateX(0); }
+
+    .cart-header {
+      background: var(--blue); color: white;
+      padding: 16px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .cart-header h2 { font-size: 17px; font-weight: 800; }
+    .close-btn {
+      background: none; border: none; color: white;
+      font-size: 26px; cursor: pointer; line-height: 1;
+      opacity: 0.8; transition: opacity 0.15s;
+    }
+    .close-btn:hover { opacity: 1; }
+
+    .cart-items { flex: 1; overflow-y: auto; padding: 12px 16px; }
+    .cart-empty {
+      text-align: center; color: var(--muted);
+      padding: 48px 20px; font-size: 15px; line-height: 1.6;
+    }
+    .cart-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cart-item-name { font-weight: 700; font-size: 13px; line-height: 1.3; }
+    .cart-item-code { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .cart-item-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 8px; gap: 8px;
+    }
+    .cart-qty-ctrl {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--gray); border-radius: 16px; padding: 3px 8px;
+    }
+    .cart-qty-btn {
+      width: 22px; height: 22px; border-radius: 50%; border: none;
+      background: var(--blue); color: white; font-size: 16px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .cart-qty-val { font-weight: 700; font-size: 15px; min-width: 20px; text-align: center; }
+    .cart-item-subtotal { font-weight: 800; font-size: 14px; color: var(--blue); }
+    .cart-remove-btn {
+      color: #bbb; background: none; border: none;
+      font-size: 18px; cursor: pointer; padding: 0;
+      transition: color 0.15s; line-height: 1;
+    }
+    .cart-remove-btn:hover { color: var(--red); }
+
+    .cart-footer {
+      padding: 14px 18px 18px;
+      border-top: 2px solid var(--border);
+      background: #fafafa;
+    }
+    .cart-total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .cart-total-label { font-size: 14px; color: var(--muted); font-weight: 600; }
+    .cart-total-value { font-size: 22px; font-weight: 800; color: var(--blue); }
+
+    .client-info { margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .client-info input {
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .client-info input:focus { border-color: var(--blue-light); }
+
+    .whatsapp-btn {
+      width: 100%; background: #25D366; color: white;
+      border: none; border-radius: 12px;
+      padding: 14px; font-size: 16px; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      gap: 8px; transition: background 0.15s; letter-spacing: 0.2px;
+    }
+    .whatsapp-btn:hover { background: #128C7E; }
+    .whatsapp-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* ── STATES ── */
+    .loading { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid var(--blue-pale);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-results {
+      text-align: center; padding: 60px 20px;
+      color: var(--muted); font-size: 15px;
+    }
+
+    @media (max-width: 580px) {
+      .products-grid { grid-template-columns: 1fr; }
+      .price-mayorista { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="brand">
+      Travel Blue <span>Argentina</span>
+      <small>CATÁLOGO MAYORISTA</small>
+    </div>
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Mi pedido
+      <div class="cart-count" id="cartCount">0</div>
+    </button>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="🔍  Buscar por nombre o código..." oninput="filterProducts()">
+  </div>
+</header>
+
+<div class="tabs" id="tabsContainer"></div>
+
+<div class="products-section" id="productsSection">
+  <div class="loading">
+    <div class="spinner"></div>
+    Cargando catálogo...
+  </div>
+</div>
+
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartOnOverlay(event)">
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h2>📋 Mi pedido</h2>
+      <button class="close-btn" onclick="closeCart()">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">Todavía no agregaste productos.<br>Navegá el catálogo y sumá lo que necesitás.</div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total mayorista:</span>
+        <span class="cart-total-value" id="cartTotal">$ 0</span>
+      </div>
+      <div class="client-info">
+        <input type="text" id="clientName" placeholder="Tu nombre / razón social">
+        <input type="text" id="clientPhone" placeholder="Tu teléfono (opcional)">
+      </div>
+      <button class="whatsapp-btn" onclick="sendWhatsApp()">
+        📱 Enviar pedido por WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  ⚙️  CONFIGURACIÓN — EDITÁ ESTOS DOS VALORES
+// ============================================================
+const CONFIG = {
+  // 1. URL del Google Sheet publicado como CSV.
+  //    Pasos: Archivo → Compartir → Publicar en la web
+  //           → Hoja: elegí la hoja → Formato: CSV → Publicar → Copiar URL
+  https://docs.google.com/spreadsheets/d/e/2PACX-1vQ292rWuYOy5WPbAcJg_5Gz3Sulo2mvNQlTI1Tx3PjjuySjyy-OEmYigAgP83GzcvKMsfAZXck-Dh_M/pub?gid=1256372311&single=true&output=csv: '',   // ← pegá la URL acá
+
+  // 2. Tu número de WhatsApp con código de país (sin + ni espacios)
+  WHATSAPP_NUMBER: '5493535697188',  // ← reemplazá con tu número
+};
+// ============================================================
+
+let allProducts = [];
+let cart        = {};   // { [codigo]: { product, qty } }
+let activeTab   = 'TODOS';
+let searchQuery = '';
+
+// ── CARGA DE DATOS ──────────────────────────────────────────
+async function loadProducts() {
+  if (!CONFIG.SHEET_CSV_URL) {
+    allProducts = SAMPLE_DATA;
+    init();
+    return;
+  }
+  try {
+    const url = CONFIG.SHEET_CSV_URL + (CONFIG.SHEET_CSV_URL.includes('?') ? '&' : '?') + '_t=' + Date.now();
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const csv  = await res.text();
+    allProducts = parseCSV(csv);
+    init();
+  } catch (e) {
+    document.getElementById('productsSection').innerHTML =
+      `<div class="loading">⚠️ No se pudo cargar el catálogo.<br><small style="font-size:12px">${e.message}</small></div>`;
+  }
+}
+
+function parseCSV(text) {
+  const rows = text.trim().split(/\r?\n/);
+  if (rows.length < 2) return [];
+  const headers = splitCSVLine(rows[0]).map(h => h.trim().toUpperCase());
+  return rows.slice(1).map(row => {
+    const vals = splitCSVLine(row);
+    const obj  = {};
+    headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
+    return obj;
+  }).filter(p => p.CODIGO && p.DESCRIPCION);
+}
+
+function splitCSVLine(line) {
+  const result = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; continue; }
+    if (c === ',' && !inQ) { result.push(cur); cur = ''; continue; }
+    cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+// ── RENDERIZADO ──────────────────────────────────────────────
+function init() { renderTabs(); renderProducts(); }
+
+function categories() {
+  return ['TODOS', ...new Set(allProducts.map(p => p.CATEGORIA).filter(Boolean))];
+}
+
+function renderTabs() {
+  document.getElementById('tabsContainer').innerHTML = categories().map(c =>
+    `<button class="tab${c === activeTab ? ' active' : ''}" onclick="setTab('${c}')">${c}</button>`
+  ).join('');
+}
+
+function setTab(cat) { activeTab = cat; renderTabs(); renderProducts(); }
+
+function filterProducts() {
+  searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+  renderProducts();
+}
+
+function visibleProducts() {
+  return allProducts.filter(p => {
+    const catOk  = activeTab === 'TODOS' || p.CATEGORIA === activeTab;
+    const srchOk = !searchQuery
+      || (p.DESCRIPCION || '').toLowerCase().includes(searchQuery)
+      || (p.CODIGO || '').toLowerCase().includes(searchQuery);
+    return catOk && srchOk;
+  });
+}
+
+function renderProducts() {
+  const prods = visibleProducts();
+  const sec   = document.getElementById('productsSection');
+  if (!prods.length) {
+    sec.innerHTML = '<div class="empty-results">No hay productos que coincidan con la búsqueda.</div>';
+    return;
+  }
+  const byCat = {};
+  prods.forEach(p => { (byCat[p.CATEGORIA] = byCat[p.CATEGORIA] || []).push(p); });
+  sec.innerHTML = Object.entries(byCat).map(([cat, list]) =>
+    `<div class="category-title">${cat}</div>
+     <div class="products-grid">${list.map(productCardHTML).join('')}</div>`
+  ).join('');
+}
+
+function safeId(codigo) { return 'p-' + codigo.replace(/[^a-zA-Z0-9]/g, '-'); }
+
+function fmt(val) {
+  const n = Math.round(parseFloat(val) || 0);
+  return '$ ' + n.toLocaleString('es-AR');
+}
+
+function productImgSrc(p) {
+  // Si hay URL de foto en el Google Sheet, usarla; si no, buscar en carpeta fotos/
+  if (p.FOTO && p.FOTO.startsWith('http')) return p.FOTO;
+  const safe = (p.CODIGO || '').replace(/\//g, '_');
+  return `fotos/${safe}.jpeg`;
+}
+
+function productCardHTML(p) {
+  const agotado = (p.ESTADO || '').toUpperCase() === 'AGOTADO';
+  const inCart  = !!cart[p.CODIGO];
+  const qty     = inCart ? cart[p.CODIGO].qty : 1;
+  const sid     = safeId(p.CODIGO);
+  const imgSrc  = productImgSrc(p);
+
+  return `
+  <div class="product-card${agotado ? ' agotado' : ''}${inCart ? ' in-cart' : ''}" id="${sid}">
+    <div class="product-img-wrap">
+      <img src="${imgSrc}" alt="${p.DESCRIPCION}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="product-img-placeholder" style="display:none">🧳</div>
+    </div>
+    <div class="product-card-body">
+      <div class="product-header">
+        <span class="product-code">${p.CODIGO}</span>
+        ${agotado ? '<span class="badge-agotado">AGOTADO</span>' : ''}
+      </div>
+      <div class="product-name">${p.DESCRIPCION}</div>
+      <div class="product-prices">
+        <div>
+          <div class="price-mayorista">${fmt(p.PRECIO_MAYORISTA)}</div>
+        </div>
+        ${p.PVP ? `<div class="price-pvp">PVP sugerido<br><strong>${fmt(p.PVP)}</strong></div>` : ''}
+      </div>
+      ${agotado ? `<div style="font-size:12px;color:#aaa;margin-top:2px">No disponible por ahora</div>` : `
+      <div class="product-footer">
+        <div class="qty-control">
+          <button class="qty-btn" onclick="cardQtyChange('${p.CODIGO}',-1)" ${!inCart?'disabled':''}>−</button>
+          <span class="qty-display" id="qty-${sid}">${qty}</span>
+          <button class="qty-btn" onclick="cardQtyChange('${p.CODIGO}',1)">+</button>
+        </div>
+        <button class="add-btn${inCart?' added':''}" id="addbtn-${sid}" onclick="addToCart('${p.CODIGO}')">
+          ${inCart ? '✓ En pedido' : '+ Agregar'}
+        </button>
+      </div>`}
+    </div>
+  </div>`;
+}
+
+// ── CARRITO ──────────────────────────────────────────────────
+function cardQtyChange(codigo, delta) {
+  if (!cart[codigo]) return;
+  const newQty = Math.max(1, cart[codigo].qty + delta);
+  cart[codigo].qty = newQty;
+  // Actualizar display en card
+  const sid = safeId(codigo);
+  const el  = document.getElementById('qty-' + sid);
+  if (el) el.textContent = newQty;
+  updateCartUI();
+}
+
+function addToCart(codigo) {
+  const product = allProducts.find(p => p.CODIGO === codigo);
+  if (!product) return;
+  const sid = safeId(codigo);
+  const qtyEl = document.getElementById('qty-' + sid);
+  const qty = qtyEl ? parseInt(qtyEl.textContent) || 1 : 1;
+  cart[codigo] = { product, qty };
+  updateCartUI();
+  // Actualizar solo la card afectada sin re-render completo
+  const card = document.getElementById(sid);
+  if (card) {
+    card.classList.add('in-cart');
+    const btn = document.getElementById('addbtn-' + sid);
+    if (btn) { btn.textContent = '✓ En pedido'; btn.classList.add('added'); }
+    const minusBtn = card.querySelector('.qty-btn');
+    if (minusBtn) minusBtn.disabled = false;
+  }
+}
+
+function removeFromCart(codigo) {
+  delete cart[codigo];
+  updateCartUI();
+  renderProducts(); // Re-render para actualizar cards
+}
+
+function updateCartQty(codigo, qty) {
+  if (qty < 1) { removeFromCart(codigo); return; }
+  if (cart[codigo]) { cart[codigo].qty = qty; updateCartUI(); }
+}
+
+function updateCartUI() {
+  // Badge
+  const count = Object.keys(cart).length;
+  document.getElementById('cartCount').textContent = count;
+
+  // Panel
+  const items = Object.values(cart);
+  const container = document.getElementById('cartItems');
+  if (!items.length) {
+    container.innerHTML = '<div class="cart-empty">Todavía no agregaste productos.<br>Navegá el catálogo y sumá lo que necesitás.</div>';
+    document.getElementById('cartTotal').textContent = '$ 0';
+    return;
+  }
+  let total = 0;
+  container.innerHTML = items.map(({ product, qty }) => {
+    const sub = Math.round((parseFloat(product.PRECIO_MAYORISTA) || 0) * qty);
+    total += sub;
+    return `
+    <div class="cart-item">
+      <div class="cart-item-name">${product.DESCRIPCION}</div>
+      <div class="cart-item-code">Cód: ${product.CODIGO}</div>
+      <div class="cart-item-row">
+        <div class="cart-qty-ctrl">
+          <button class="cart-qty-btn" onclick="updateCartQty('${product.CODIGO}', ${qty - 1})">−</button>
+          <span class="cart-qty-val">${qty}</span>
+          <button class="cart-qty-btn" onclick="updateCartQty('${product.CODIGO}', ${qty + 1})">+</button>
+        </div>
+        <span class="cart-item-subtotal">${fmt(sub)}</span>
+        <button class="cart-remove-btn" onclick="removeFromCart('${product.CODIGO}')" title="Quitar">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('cartTotal').textContent = fmt(total);
+}
+
+function openCart()  { document.getElementById('cartOverlay').classList.add('open'); }
+function closeCart() { document.getElementById('cartOverlay').classList.remove('open'); }
+function closeCartOnOverlay(e) { if (e.target === document.getElementById('cartOverlay')) closeCart(); }
+
+// ── WHATSAPP ─────────────────────────────────────────────────
+function sendWhatsApp() {
+  const items = Object.values(cart);
+  if (!items.length) { alert('Agregá al menos un producto antes de enviar el pedido.'); return; }
+
+  const nombre = document.getElementById('clientName').value.trim();
+  const tel    = document.getElementById('clientPhone').value.trim();
+  const fecha  = new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
+
+  let msg = '🧳 *PEDIDO TRAVEL BLUE ARGENTINA*\n';
+  msg    += '━━━━━━━━━━━━━━━━━━━━━━\n';
+  if (nombre) msg += `👤 *Cliente:* ${nombre}\n`;
+  if (tel)    msg += `📞 *Tel:* ${tel}\n`;
+  msg    += `📅 *Fecha:* ${fecha}\n`;
+  msg    += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+  let total = 0;
+  items.forEach(({ product, qty }) => {
+    const sub = Math.round((parseFloat(product.PRECIO_MAYORISTA) || 0) * qty);
+    total += sub;
+    msg += `• *${product.DESCRIPCION}*\n`;
+    msg += `  Cód: ${product.CODIGO}  |  Cant: ${qty}  |  ${fmt(sub)}\n\n`;
+  });
+
+  msg += '━━━━━━━━━━━━━━━━━━━━━━\n';
+  msg += `*TOTAL MAYORISTA: ${fmt(total)}*\n`;
+  msg += '━━━━━━━━━━━━━━━━━━━━━━\n';
+  msg += '_Pedido generado desde el catálogo online Travel Blue Argentina_';
+
+  window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ── DATOS EMBEBIDOS (se usan si no hay SHEET_CSV_URL) ────────
+// Estos son los datos actuales de tu planilla. Una vez que tengas
+// el Google Sheet configurado, se reemplazarán automáticamente.
+const SAMPLE_DATA = [
+  // MOCHILAS
+  {CATEGORIA:'MOCHILAS',CODIGO:'33020',DESCRIPCION:'MOCHILA BACKPACK PRESTIGE BLACK',PRECIO_MAYORISTA:'49999',PVP:'115999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33021',DESCRIPCION:'MOCHILA PRESTIGE EXECUTIVE GREY',PRECIO_MAYORISTA:'49999',PVP:'115999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33022',DESCRIPCION:'MOCHILA PRO 23 SIGNATURE GREEN',PRECIO_MAYORISTA:'69999',PVP:'139000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33030',DESCRIPCION:'MOCHILA LUXE PRO EXECUTIVE BLACK',PRECIO_MAYORISTA:'59999',PVP:'139000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33040',DESCRIPCION:'MOCHILA INNOVATOR EXECUTIVE BLACK',PRECIO_MAYORISTA:'52000',PVP:'115999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33048',DESCRIPCION:'MOCHILA PRO 23 SIGNATURE 1205 BLACK',PRECIO_MAYORISTA:'68999',PVP:'139000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33050',DESCRIPCION:'MOCHILA BACKPACK XPERT BLACK',PRECIO_MAYORISTA:'39999',PVP:'98999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33051',DESCRIPCION:'MOCHILA BACKPACK XPERT GREY',PRECIO_MAYORISTA:'39999',PVP:'115999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33055',DESCRIPCION:'MOCHILA JOURNEY LITE M BLACK',PRECIO_MAYORISTA:'64999',PVP:'129900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33056',DESCRIPCION:'MOCHILA JOURNEY LITE M GREY',PRECIO_MAYORISTA:'64999',PVP:'129900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33057',DESCRIPCION:'MOCHILA JOURNEY LITE M NAVY BLUE',PRECIO_MAYORISTA:'64999',PVP:'129900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33059',DESCRIPCION:'MOCHILA ADVENTURE PACK',PRECIO_MAYORISTA:'44500',PVP:'94999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33070',DESCRIPCION:'MOCHILA METRO PRO EXECUTIVE BLACK',PRECIO_MAYORISTA:'49999',PVP:'114999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33075',DESCRIPCION:'MOCHILA ELEGANCE EXECUTIVE BLACK',PRECIO_MAYORISTA:'49999',PVP:'114999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33098',DESCRIPCION:'MOCHILA ECOJOURNEY TECH',PRECIO_MAYORISTA:'79999',PVP:'169000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33100',DESCRIPCION:'MOCHILA CITY SCAPE URBAN BLUE',PRECIO_MAYORISTA:'34999',PVP:'79899',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33103',DESCRIPCION:'MOCHILA TREKKER LITE BLACK',PRECIO_MAYORISTA:'34999',PVP:'79899',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33104',DESCRIPCION:'MOCHILA TREKKER BLACK',PRECIO_MAYORISTA:'36500',PVP:'64999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33107',DESCRIPCION:'MOCHILA TREKKER CAMEL',PRECIO_MAYORISTA:'34999',PVP:'85000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33109',DESCRIPCION:'MOCHILA TREKKER OLIVE',PRECIO_MAYORISTA:'34999',PVP:'85000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33110',DESCRIPCION:'MOCHILA HARMONY URBAN BLUE',PRECIO_MAYORISTA:'34999',PVP:'79899',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33111',DESCRIPCION:'MOCHILA HARMONY URBAN GREY',PRECIO_MAYORISTA:'34999',PVP:'79899',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33120',DESCRIPCION:'MOCHILA DOWNTOWN EXPLORER BLACK',PRECIO_MAYORISTA:'34999',PVP:'79899',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33121',DESCRIPCION:'MOCHILA DOWNTOWN EXPLORER NAVY',PRECIO_MAYORISTA:'34999',PVP:'79899',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'33180',DESCRIPCION:'MOCHILA BACKPACK ISOLA MILAN BLACK',PRECIO_MAYORISTA:'36999',PVP:'79999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'3BP-5711.1',DESCRIPCION:'MOCHILA BACKPACK DUBLIN BLACK',PRECIO_MAYORISTA:'33999',PVP:'75000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'3BP-5712.1',DESCRIPCION:'MOCHILA BACKPACK MEDELLIN BLACK',PRECIO_MAYORISTA:'29999',PVP:'52000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'3BP-5753.1',DESCRIPCION:'MOCHILA BACKPACK NEW ORLEAN BLACK',PRECIO_MAYORISTA:'24999',PVP:'43000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'MOCHILAS',CODIGO:'3BP-5761.1',DESCRIPCION:'MOCHILA BACKPACK MELBOURNE BLACK',PRECIO_MAYORISTA:'29999',PVP:'52000',ESTADO:'DISPONIBLE'},
+  // VALIJAS
+  {CATEGORIA:'VALIJAS',CODIGO:'43305',DESCRIPCION:'VALIJA CARRY ON 20" WANDERER TITAN',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43307',DESCRIPCION:'VALIJA CARRY ON 20" WANDERER NEGRA',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43311',DESCRIPCION:'VALIJA CARRY ON JOURNEYJET BLACK 20"',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43312',DESCRIPCION:'VALIJA CARRY ON JOURNEYJET WHITE 20"',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43313',DESCRIPCION:'VALIJA CARRY ON JOURNEYJET GREEN 20"',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43314',DESCRIPCION:'VALIJA CARRY ON ADVENTURE NAVY 20"',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43315',DESCRIPCION:'VALIJA CARRY ON 20" ADVENTURE NEGRA',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43327',DESCRIPCION:'VALIJA CARRY ON 20" LUXE WANDERER ORANGE',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43329',DESCRIPCION:'VALIJA CARRY ON 20" LUXE WANDERER PURPLE',PRECIO_MAYORISTA:'83500',PVP:'165000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43351',DESCRIPCION:'VALIJA CARRY ON 20" SAHARA NUDE',PRECIO_MAYORISTA:'62500',PVP:'129999',ESTADO:'AGOTADO'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43352',DESCRIPCION:'VALIJA CARRY ON 20" SAHARA BLACK',PRECIO_MAYORISTA:'62500',PVP:'129999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'43353',DESCRIPCION:'VALIJA CARRY ON 20" SAHARA TURQUESA',PRECIO_MAYORISTA:'62500',PVP:'129999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'433.68-72',DESCRIPCION:'SET VALIJA EVEREST 20" 24" NEGRA',PRECIO_MAYORISTA:'128400',PVP:'269998',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'4330.1-2',DESCRIPCION:'SET VALIJA 20" 24" NOMAD NEGRA',PRECIO_MAYORISTA:'178500',PVP:'364999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'VALIJAS',CODIGO:'4330.3-4',DESCRIPCION:'SET VALIJA 20" 24" NOMAD PINK',PRECIO_MAYORISTA:'178500',PVP:'364999',ESTADO:'DISPONIBLE'},
+  // ACCESORIOS
+  {CATEGORIA:'ACCESORIOS',CODIGO:'3065',DESCRIPCION:'MOCHILA PLEGABLE',PRECIO_MAYORISTA:'12999',PVP:'29900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'3068',DESCRIPCION:'MOCHILA PLEGABLE',PRECIO_MAYORISTA:'10999',PVP:'24900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8027',DESCRIPCION:'CANDADO DE SEGURIDAD TSA',PRECIO_MAYORISTA:'5399',PVP:'13989',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8028',DESCRIPCION:'CANDADOS TSA PARA VALIJA X 2 UNIDADES',PRECIO_MAYORISTA:'7700',PVP:'18989',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8036',DESCRIPCION:'CANDADO TSA CON COMBINACION 3 DIALES',PRECIO_MAYORISTA:'6999',PVP:'16989',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8038',DESCRIPCION:'CANDADO TSA PARA VALIJAS X 2 UN.',PRECIO_MAYORISTA:'13500',PVP:'32990',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8040',DESCRIPCION:'CORREA DE VIAJE',PRECIO_MAYORISTA:'3850',PVP:'9989',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8053',DESCRIPCION:'BOLSA PLEGABLE',PRECIO_MAYORISTA:'6350',PVP:'15900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8066',DESCRIPCION:'BOLSO PLEGABLE DE MANO',PRECIO_MAYORISTA:'9999',PVP:'26900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8067',DESCRIPCION:'BOLSO PLEGABLE DE MANO IMPERMEABLE',PRECIO_MAYORISTA:'12999',PVP:'31900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8101',DESCRIPCION:'IDENTIFICADOR DE VALIJA PUZZLE',PRECIO_MAYORISTA:'2999',PVP:'7499',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8102',DESCRIPCION:'IDENTIFICADOR DE VALIJA WAVES',PRECIO_MAYORISTA:'2999',PVP:'7499',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8103',DESCRIPCION:'IDENTIFICADOR DE VALIJA SQUARES',PRECIO_MAYORISTA:'2999',PVP:'7499',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8104',DESCRIPCION:'IDENTIFICADOR DE VALIJA MAP',PRECIO_MAYORISTA:'2999',PVP:'7499',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8111',DESCRIPCION:'PORTAVALORES',PRECIO_MAYORISTA:'5999',PVP:'14900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8113',DESCRIPCION:'PORTAVALORES',PRECIO_MAYORISTA:'6750',PVP:'16900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8124',DESCRIPCION:'PORTAVALORES ULTRA SLIM NECK CARRIER',PRECIO_MAYORISTA:'5999',PVP:'14989',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8207',DESCRIPCION:'ALMOHADA DE VIAJE INTELIGENTE',PRECIO_MAYORISTA:'7999',PVP:'16000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8208',DESCRIPCION:'ALMOHADA DE VIAJE DREAMER',PRECIO_MAYORISTA:'9999',PVP:'25000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8209',DESCRIPCION:'ALMOHADA DE VIAJE INFINITY',PRECIO_MAYORISTA:'14999',PVP:'39900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8212',DESCRIPCION:'ALMOHADA DE VIAJE INTELIGENTE',PRECIO_MAYORISTA:'12999',PVP:'35000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8217',DESCRIPCION:'ALMOHADA ERGONOMICA MASAJE',PRECIO_MAYORISTA:'19999',PVP:'42900',ESTADO:'AGOTADO'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8220',DESCRIPCION:'ALMOHADA DE VIAJE',PRECIO_MAYORISTA:'3700',PVP:'9900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8221',DESCRIPCION:'ALMOHADA DE VIAJE INFLABLE',PRECIO_MAYORISTA:'5899',PVP:'14989',ESTADO:'AGOTADO'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8222',DESCRIPCION:'ALMOHADA DE VIAJE',PRECIO_MAYORISTA:'6600',PVP:'15989',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8223',DESCRIPCION:'COMFORT SET ALMOHADA + ANTIFAZ',PRECIO_MAYORISTA:'7350',PVP:'18499',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8232',DESCRIPCION:'ALMOHADA DE VIAJE INTELIGENTE',PRECIO_MAYORISTA:'12500',PVP:'28900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8330',DESCRIPCION:'ORGANIZADOR DE ROPA PARA EQUIPAJE',PRECIO_MAYORISTA:'7550',PVP:'18900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8341',DESCRIPCION:'ORGANIZADOR NECESER PARA EQUIPAJE',PRECIO_MAYORISTA:'11500',PVP:'27499',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8450',DESCRIPCION:'ANTIFAZ PARA DORMIR',PRECIO_MAYORISTA:'2399',PVP:'5900',ESTADO:'AGOTADO'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8451',DESCRIPCION:'COMFORT SET ANTIFAZ + TAPONES',PRECIO_MAYORISTA:'2899',PVP:'6900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8453',DESCRIPCION:'ANTIFAZ PARA DORMIR LUXURY',PRECIO_MAYORISTA:'3700',PVP:'8900',ESTADO:'AGOTADO'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8454',DESCRIPCION:'ANTIFAZ PARA DORMIR',PRECIO_MAYORISTA:'4200',PVP:'10900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8490',DESCRIPCION:'TAPONES PARA LOS OIDOS',PRECIO_MAYORISTA:'2399',PVP:'5900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8492',DESCRIPCION:'TAPONES DE VUELO PARA LOS OIDOS',PRECIO_MAYORISTA:'5399',PVP:'12999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8493',DESCRIPCION:'TAPONES DE SILICONA PARA LOS OIDOS',PRECIO_MAYORISTA:'5399',PVP:'13900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8590',DESCRIPCION:'CUBRE VALIJA SMALL 20" A 22"',PRECIO_MAYORISTA:'17500',PVP:'39900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8591',DESCRIPCION:'CUBRE VALIJA MEDIUM 24" A 26"',PRECIO_MAYORISTA:'18999',PVP:'42900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8592',DESCRIPCION:'CUBRE VALIJA LARGE 28" A 30"',PRECIO_MAYORISTA:'19999',PVP:'44900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8593',DESCRIPCION:'CUBRE VALIJA SMALL 20" A 22" (B)',PRECIO_MAYORISTA:'17500',PVP:'39900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8594',DESCRIPCION:'CUBRE VALIJA MEDIUM 24" A 26" (B)',PRECIO_MAYORISTA:'18999',PVP:'42900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8595',DESCRIPCION:'CUBRE VALIJA LARGE 28" A 30" (B)',PRECIO_MAYORISTA:'19999',PVP:'44900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8596',DESCRIPCION:'CUBRE VALIJA SMALL 20" A 22" (C)',PRECIO_MAYORISTA:'14500',PVP:'33900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8597',DESCRIPCION:'CUBRE VALIJA MEDIUM 24" A 26" (C)',PRECIO_MAYORISTA:'15999',PVP:'36900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8598',DESCRIPCION:'CUBRE VALIJA LARGE 24" A 26" (C)',PRECIO_MAYORISTA:'17500',PVP:'39900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8635',DESCRIPCION:'RIÑONERA METRO POUCH',PRECIO_MAYORISTA:'13999',PVP:'32990',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8650',DESCRIPCION:'MANTA DE VIAJE',PRECIO_MAYORISTA:'11999',PVP:'19500',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8660',DESCRIPCION:'PILOTO',PRECIO_MAYORISTA:'3399',PVP:'7989',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8790',DESCRIPCION:'SOQUETES DE COMPRESION L/XL',PRECIO_MAYORISTA:'7550',PVP:'17900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'8791',DESCRIPCION:'SOQUETES DE COMPRESION S/M',PRECIO_MAYORISTA:'7550',PVP:'17900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'9521',DESCRIPCION:'BOTELLA TERMICA NAVY',PRECIO_MAYORISTA:'12500',PVP:'27900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'9522',DESCRIPCION:'BOTELLA TERMICA IVORY',PRECIO_MAYORISTA:'12500',PVP:'27900',ESTADO:'AGOTADO'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'9523',DESCRIPCION:'BOTELLA TERMICA GREY',PRECIO_MAYORISTA:'12500',PVP:'27900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'9524',DESCRIPCION:'BOTELLA TERMICA LIGHT GREEN',PRECIO_MAYORISTA:'12500',PVP:'27900',ESTADO:'AGOTADO'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'9525',DESCRIPCION:'BOTELLA TERMICA BLACK',PRECIO_MAYORISTA:'12500',PVP:'27900',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'ACCESORIOS',CODIGO:'82412',DESCRIPCION:'ALMOHADA DE VIAJE CON MASAJEADOR ANOMEO',PRECIO_MAYORISTA:'16999',PVP:'42900',ESTADO:'DISPONIBLE'},
+  // SLOOTH
+  {CATEGORIA:'SLOOTH',CODIGO:'89031',DESCRIPCION:'ALMOHADA DE VIAJE PANDA KID',PRECIO_MAYORISTA:'11000',PVP:'25000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'89032',DESCRIPCION:'ALMOHADA DE VIAJE UNICORNIO KID',PRECIO_MAYORISTA:'11000',PVP:'25000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'89034',DESCRIPCION:'ALMOHADA DE VIAJE OSO KID',PRECIO_MAYORISTA:'11000',PVP:'25000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'89035',DESCRIPCION:'ALMOHADA DE VIAJE TIGRE ROSA KID',PRECIO_MAYORISTA:'11000',PVP:'25000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'89036',DESCRIPCION:'ALMOHADA DE VIAJE TIGRE AZUL KID',PRECIO_MAYORISTA:'11000',PVP:'25000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'81.440.1',DESCRIPCION:'ALMOHADA DE VIAJE INTELIGENTE',PRECIO_MAYORISTA:'9500',PVP:'18999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'81.462.1',DESCRIPCION:'ALMOHADA DE VIAJE INTELIGENTE',PRECIO_MAYORISTA:'7999',PVP:'17000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'89048',DESCRIPCION:'ALMOHADA DE VIAJE ERGONOMICA GRIS',PRECIO_MAYORISTA:'9999',PVP:'19999',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'81.490.1',DESCRIPCION:'ALMOHADA DE VIAJE ERGONOMICA NEGRO',PRECIO_MAYORISTA:'10500',PVP:'22000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'81.502.1',DESCRIPCION:'ALMOHADA DE VIAJE ERGONOMICA',PRECIO_MAYORISTA:'10500',PVP:'22000',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'81.520.4',DESCRIPCION:'ALMOHADA DE VIAJE',PRECIO_MAYORISTA:'7999',PVP:'18499',ESTADO:'DISPONIBLE'},
+  {CATEGORIA:'SLOOTH',CODIGO:'81.960.1',DESCRIPCION:'ALMOHADA DE VIAJE ERGONOMICA',PRECIO_MAYORISTA:'10500',PVP:'22000',ESTADO:'AGOTADO'},
+  {CATEGORIA:'SLOOTH',CODIGO:'85.230.3',DESCRIPCION:'CANDADO TSA KEY',PRECIO_MAYORISTA:'5999',PVP:'14000',ESTADO:'AGOTADO'},
+  {CATEGORIA:'SLOOTH',CODIGO:'85.260.1',DESCRIPCION:'CANDADO TSA CON COMBINACION',PRECIO_MAYORISTA:'5999',PVP:'14000',ESTADO:'DISPONIBLE'},
+];
+
+loadProducts();
+</script>
+</body>
+</html>
