@@ -523,7 +523,7 @@ function productCardHTML(p) {
   return `
   <div class="product-card${agotado ? ' agotado' : ''}${inCart ? ' in-cart' : ''}" id="${sid}">
     <div class="product-img-wrap">
-      <img loading="lazy" src="${imgSrc}" alt="${p.DESCRIPCION}"
+      <img data-src="${imgSrc}" alt="${p.DESCRIPCION}"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="product-img-placeholder" style="display:none">🧳</div>
     </div>
@@ -790,6 +790,20 @@ const SAMPLE_DATA = [
   {CATEGORIA:'SLOOTH',CODIGO:'85.230.3',DESCRIPCION:'CANDADO TSA KEY',PRECIO_MAYORISTA:'5999',PVP:'14000',ESTADO:'AGOTADO'},
   {CATEGORIA:'SLOOTH',CODIGO:'85.260.1',DESCRIPCION:'CANDADO TSA CON COMBINACION',PRECIO_MAYORISTA:'5999',PVP:'14000',ESTADO:'DISPONIBLE'},
 ];
+
+
+
+// Lazy loading de imágenes
+const lazyObserver = ('IntersectionObserver' in window) ? new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const img = e.target;
+      img.src = img.dataset.src || '';
+      img.removeAttribute('data-src');
+      lazyObserver.unobserve(img);
+    }
+  });
+}, { rootMargin: '200px' }) : null;
 
 loadProducts();
 </script>
